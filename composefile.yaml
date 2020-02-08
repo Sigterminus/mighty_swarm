@@ -1,0 +1,43 @@
+version: "3.7"
+services:
+  mysqld:
+        image: mysql:latest
+        # networks:
+                #  - commonNet
+        ports: 
+          - 3307:3306
+        environment: #clear text pw is bad, maybe we could work with 'secrets' here 
+          MYSQL_ROOT_PASSWORD: 12345
+
+  mysqlExport:
+        image: prom/mysqld-exporter
+        # networks:
+                #  - commonNet
+        ports:
+          - 9104:9104 
+       #links: 
+            #- mysqld:mysqlDB
+        environment:                            #look for better solution, name always the same?
+             DATA_SOURCE_NAME: "root:12345@(dockerproject_mysqld_1:3306)/mysql"
+
+
+  prometheusd:
+        image: prom/prometheus
+        # networks:
+        #  - commonNet
+        configs:
+          - source: prometheusConf
+            target: /etc/prometheus/prometheus.yml
+
+        ports:
+          - 9090:9090
+          - 9093:9093
+    
+configs:
+ prometheusConf:
+   file: ./prometheus.yml
+
+   #networks:
+   #  commonNet:
+   #   driver: overlay
+
