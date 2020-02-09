@@ -18,7 +18,7 @@ services:
        #links: 
             #- mysqld:mysqlDB
         environment:                            #look for better solution, name always the same?
-             DATA_SOURCE_NAME: "root:12345@(dockerproject_mysqld_1:3306)/mysql"
+          DATA_SOURCE_NAME: "root:12345@(mysqlD_mysqld:3306)/mysql"
 
 
   prometheusd:
@@ -28,6 +28,8 @@ services:
         configs:
           - source: prometheusConf
             target: /etc/prometheus/prometheus.yml
+          - source: promAlertConf
+            target: /etc/prometheus/mysqlAlerting.yml  
 
         ports:
           - 9090:9090
@@ -36,6 +38,9 @@ services:
 configs:
  prometheusConf:
    file: ./prometheus.yml
+ promAlertConf:
+   file: ./mysqlAlerting.yml
+
 
    #networks:
    #  commonNet:
