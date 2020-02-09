@@ -4,6 +4,8 @@ ALL_SERVICES=$(docker service ls  --format "{{.ID}}:{{.Name}}:{{.Image}}")
 declare -a SERVICE_MAP
 i=1
 
+echo "Container name    --   Image Name"
+echo "----------------------------------"
 for service in $ALL_SERVICES
   do
     SERVICE_MAP+=( $(echo $service | cut -d ":" -f 2) )

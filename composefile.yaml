@@ -2,8 +2,6 @@ version: "3.7"
 services:
   mysqld:
         image: mysql:latest
-        # networks:
-                #  - commonNet
         ports: 
           - 3307:3306
         environment: #clear text pw is bad, maybe we could work with 'secrets' here 
@@ -11,38 +9,33 @@ services:
 
   mysqlExport:
         image: prom/mysqld-exporter
-        # networks:
-                #  - commonNet
         ports:
-          - 9104:9104 
-       #links: 
-            #- mysqld:mysqlDB
-        environment:                            #look for better solution, name always the same?
-          DATA_SOURCE_NAME: "root:12345@(mysqlD_mysqld:3306)/mysql"
+          - 9104:9104 #there is no need to publish port on Host?
+        environment:                           
+          DATA_SOURCE_NAME: "root:12345@(mysqlD_mysqld:3306)/mysql" #look for better solution:    
+                                                                    # - name always the same?
+                                                                    # - secret instead clear text pw?
 
 
   prometheusd:
         image: prom/prometheus
-        # networks:
-        #  - commonNet
         configs:
           - source: prometheusConf
             target: /etc/prometheus/prometheus.yml
           - source: promAlertConf
             target: /etc/prometheus/mysqlAlerting.yml  
-
+            #Todo: Add config for Alertmanager
         ports:
           - 9090:9090
           - 9093:9093
-    
+
+#config file prometheus container    
 configs:
  prometheusConf:
    file: ./prometheus.yml
  promAlertConf:
    file: ./mysqlAlerting.yml
+#
 
 
-   #networks:
-   #  commonNet:
-   #   driver: overlay
 
